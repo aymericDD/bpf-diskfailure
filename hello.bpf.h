@@ -2,16 +2,12 @@
  * Redefine it to just asm to enable successful compilation.
  * see https://github.com/iovisor/bcc/commit/2d1497cde1cc9835f759a707b42dea83bee378b8 for more details
  */
-#include <linux/types.h>
+#include "aarch64/vmlinux.h"
 #ifdef asm_inline
 #undef asm_inline
 #define asm_inline asm
 #endif
-
-#include <linux/bpf.h>
 #include <bpf/bpf_helpers.h>
-
-typedef __u64 u64;
 
 /* TODO!! This is too generic for this example, where can we pull it from? 
 */
@@ -30,3 +26,4 @@ typedef __u64 u64;
     BPF_MAP(_name, BPF_MAP_TYPE_PERF_EVENT_ARRAY, int, __u32, 1024);
 
 char LICENSE[] SEC("license") = "Dual BSD/GPL";
+

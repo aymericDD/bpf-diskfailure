@@ -8,7 +8,9 @@ import (
 import (
 	"fmt"
 	"os"
+	"bytes"
 	"os/signal"
+//	"encoding/binary"
 )
 
 func main() {
@@ -31,7 +33,7 @@ func main() {
 
 	prog, err = bpfModule.GetProgram("hello_bpftrace")
 	must(err)
-	_, err = prog.AttachRawTracepoint("sys_enter")
+	_, err = prog.AttachKprobe("__arm64_sys_openat")
 	must(err)
 
 	e := make(chan []byte, 300)
@@ -43,8 +45,12 @@ func main() {
 	counter := make(map[string]int, 350)
 	go func() {
 		for data := range e {
-			comm := string(data)
+			//pid := int(binary.LittleEndian.Uint32(data[0:4])) // Treat first 4 bytes as LittleEndian Uint32
+			//tid := int(binary.LittleEndian.Uint32(data[4:8])) // Treat first 4 bytes as LittleEndian Uint32
+			//gid := int(binary.LittleEndian.Uint32(data[8:12])) // Treat first 4 bytes as LittleEndian Uint32
+			comm := string(bytes.TrimRight(data[12:], "\x00")) // Remove excess 0's from comm, treat as string
 			counter[comm]++
+			//fmt.Printf("Pid %d. Tid: %d, Gid: %d, Command: %s\n", pid, tid, gid, comm)
 		}
 	}()
 
