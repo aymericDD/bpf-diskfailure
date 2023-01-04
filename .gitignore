@@ -1,4 +1,4 @@
 dist/
 libbpf/
-hello
+injection
 *.o
