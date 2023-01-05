@@ -11,19 +11,19 @@
 
 /* TODO!! This is too generic for this example, where can we pull it from? 
 */
-#define BPF_MAP(_name, _type, _key_type, _value_type, _max_entries) \
-    struct bpf_map_def SEC("maps") _name = {                        \
-        .type = _type,                                              \
-        .key_size = sizeof(_key_type),                              \
-        .value_size = sizeof(_value_type),                          \
-        .max_entries = _max_entries,                                \
-    };
-
-#define BPF_HASH(_name, _key_type, _value_type) \
-    BPF_MAP(_name, BPF_MAP_TYPE_HASH, _key_type, _value_type, 10240);
-
-#define BPF_PERF_OUTPUT(_name) \
-    BPF_MAP(_name, BPF_MAP_TYPE_PERF_EVENT_ARRAY, int, __u32, 1024);
+//#define BPF_MAP(_name, _type, _key_type, _value_type, _max_entries) \
+//    struct {						            \
+//        __uint(_type, BPF_MAP_TYPE_ARRAY);      		    \
+//        __uint(_max_entries, 4);                                    \
+//        __type(_key_type, int);					    \
+//        __type(_value_type, struct ipv_counts);  		    \
+//    } _name SEC(".maps");
+//
+//#define BPF_HASH(_name, _key_type, _value_type) \
+//    BPF_MAP(_name, BPF_MAP_TYPE_HASH, _key_type, _value_type, 10240);
+//
+//#define BPF_PERF_OUTPUT(_name) \
+//    BPF_MAP(_name, BPF_MAP_TYPE_PERF_EVENT_ARRAY, int, __u32, 1024);
 
 char LICENSE[] SEC("license") = "Dual BSD/GPL";
 

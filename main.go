@@ -2,10 +2,9 @@ package main
 
 import (
 	"C"
-
-	bpf "github.com/aquasecurity/tracee/libbpfgo"
-)
-import (
+	bpf "github.com/aquasecurity/libbpfgo"
+	"github.com/aquasecurity/libbpfgo/helpers"
+	"flag"
 	"fmt"
 	"os"
 	"bytes"
@@ -13,7 +12,11 @@ import (
 	"encoding/binary"
 )
 
+var nFlag = flag.Uint64("p", 0, "Process to check")
+
 func main() {
+	flag.Parse()
+
 	sig := make(chan os.Signal, 1)
 	signal.Notify(sig, os.Interrupt)
 
@@ -21,10 +24,17 @@ func main() {
 	must(err)
 	defer bpfModule.Close()
 
+	var pid uint32
+	pid = uint32(*nFlag)
+	fmt.Println(pid)
+	if err := bpfModule.InitGlobalVariable("target_pid", pid); err != nil {
+		must(err);
+	}
+
 	err = bpfModule.BPFLoadObject()
 	must(err)
 
-	go bpf.TracePrint()
+	go helpers.TracePipeListen()
 
 	prog, err := bpfModule.GetProgram("injection_bpftrace")
 	must(err)
