@@ -1,13 +1,14 @@
-FROM ubuntu:20.10
+FROM ubuntu:lunar 
 
 # Define variables.
-ARG GOVERSION=1.15.15
-ARG ARCH=amd64
+ARG GOVERSION=1.19.4
+ARG ARCH=arm64
 
 # Download development environment.
 RUN apt-get update && \
     apt-get install -y \
         libbpf-dev \
+	pahole \
         make \
         clang \
         llvm \
