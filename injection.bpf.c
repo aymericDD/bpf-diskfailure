@@ -41,13 +41,7 @@ int injection_bpftrace(void *ctx)
     bpf_probe_read(&real_parent, sizeof(real_parent), &task->real_parent);
     bpf_probe_read(&data.ppid, sizeof(data.ppid), &real_parent->tgid);
 
-    // Filter
-    // @ToDo customize pid filter
-    if (data.ppid != target_pid) {
-      return 0;
-    }
-
-    // Filter by path
+    // @ToDo Filter by path
 
     // Get datas of current process
     u32 pid = bpf_get_current_pid_tgid();
@@ -56,6 +50,12 @@ int injection_bpftrace(void *ctx)
     data.tid = tid;
     u32 gid = bpf_get_current_uid_gid();
     data.id = gid;
+
+    // Filter
+    //if (data.ppid != target_pid) {
+    if (data.ppid != target_pid && data.pid != target_pid) {
+      return 0;
+    }
 
     // Get command name
     bpf_get_current_comm(&data.comm, sizeof(data.comm));

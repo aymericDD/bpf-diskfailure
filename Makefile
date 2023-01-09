@@ -20,6 +20,7 @@ $(TARGET_BPF): $(BPF_SRC)
 	clang \
 		-I /usr/include/$(ARCH)-linux-gnu \
 		-O2 -c -target bpf \
+		-g \
 		-o $@ $<
 
 .PHONY: clean
