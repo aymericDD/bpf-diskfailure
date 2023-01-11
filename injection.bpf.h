@@ -8,6 +8,9 @@
 #define asm_inline asm
 #endif
 #include <bpf/bpf_helpers.h>
+#include <bpf/bpf_tracing.h>
+#include <bpf/bpf_core_read.h>
+#include <string.h>
 
 /* TODO!! This is too generic for this example, where can we pull it from? 
 */

@@ -18,6 +18,7 @@ $(TARGET): $(GO_SRC)
 
 $(TARGET_BPF): $(BPF_SRC)
 	clang \
+		-D__TARGET_ARCH_arm64 \
 		-I /usr/include/$(ARCH)-linux-gnu \
 		-O2 -c -target bpf \
 		-g \

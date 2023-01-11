@@ -6,9 +6,11 @@
 #include <errno.h>
 #endif
 #include <bpf/bpf_helpers.h>
-
+#include <bpf/bpf_tracing.h>
+#include <bpf/bpf_core_read.h>
 
 const volatile pid_t target_pid = 0;
+const volatile char filter_path[61] = "/";
 
 struct data_t {
     u32 ppid;
@@ -17,9 +19,6 @@ struct data_t {
     u32 id;
     char comm[100];
 };
-
-// Example of passing data using a perf map 
-// Similar to bpftrace -e 'tracepoint:raw_syscalls:sys_enter { @[comm] = count();}'
 
 struct {
     __uint(type, BPF_MAP_TYPE_PERF_EVENT_ARRAY);
@@ -41,8 +40,6 @@ int injection_bpftrace(void *ctx)
     bpf_probe_read(&real_parent, sizeof(real_parent), &task->real_parent);
     bpf_probe_read(&data.ppid, sizeof(data.ppid), &real_parent->tgid);
 
-    // @ToDo Filter by path
-
     // Get datas of current process
     u32 pid = bpf_get_current_pid_tgid();
     data.pid = pid;
@@ -51,10 +48,30 @@ int injection_bpftrace(void *ctx)
     u32 gid = bpf_get_current_uid_gid();
     data.id = gid;
 
-    // Filter
-    //if (data.ppid != target_pid) {
+    // Allow only children and parent process.
     if (data.ppid != target_pid && data.pid != target_pid) {
       return 0;
+    }
+
+    // Allow only file with the desired prefix.
+    struct pt_regs *real_regs = (struct pt_regs *)PT_REGS_PARM1(ctx);
+    int dirfd = PT_REGS_PARM1_CORE(real_regs);
+    char *path= (char *)PT_REGS_PARM2_CORE(real_regs);
+    char cmp_path_name[62];
+    bpf_probe_read(&cmp_path_name, sizeof(cmp_path_name), path);
+    char cmp_expected_path[62];
+    bpf_probe_read(cmp_expected_path, sizeof(cmp_expected_path), filter_path);
+    int filter_len = (int) (sizeof(filter_path) / sizeof(filter_path[0])) - 1;
+   
+    if (filter_len > 62) {
+        return 0;
+    }
+
+    for (int i = 0; i < filter_len; ++i) {
+      if (cmp_expected_path[i] == NULL)
+        break;
+      if (cmp_path_name[i] != cmp_expected_path[i])
+        return 0;
     }
 
     // Get command name

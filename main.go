@@ -13,6 +13,7 @@ import (
 )
 
 var nFlag = flag.Uint64("p", 0, "Process to check")
+var nPath = flag.String("f", "/", "Path to filter")
 
 func main() {
 	flag.Parse()
@@ -24,17 +25,22 @@ func main() {
 	must(err)
 	defer bpfModule.Close()
 
+	// Get Pid
 	var pid uint32
 	pid = uint32(*nFlag)
-	fmt.Println(pid)
 	if err := bpfModule.InitGlobalVariable("target_pid", pid); err != nil {
 		must(err);
 	}
 
+	path := []byte(*nPath)
+	if err := bpfModule.InitGlobalVariable("filter_path", path); err != nil {
+		must(err);
+	}
 	err = bpfModule.BPFLoadObject()
 	must(err)
 
 	go helpers.TracePipeListen()
+
 
 	prog, err := bpfModule.GetProgram("injection_bpftrace")
 	must(err)
