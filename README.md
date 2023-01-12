@@ -1,5 +1,5 @@
 # bpf-disruptor
-Basic eBPF examples in Golang using [libbpfgo](https://github.com/aquasecurity/tree/main/libbpfgo). 
+eBPF program that catch openat syscall to return en -ENOENT result. The goal is to fake sysdisk failures. This library is based on in Golang using [libbpfgo](https://github.com/aquasecurity/tree/main/libbpfgo). 
 
 ## Install Go 
 
@@ -12,15 +12,15 @@ sudo apt-get update
 sudo apt-get install libbpf-dev make clang llvm libelf-dev
 ```
 
-## Building and running hello
+## Building and running injection
 
 ```sh
 make all
-sudo ./hello
+sudo ./injection -p <your-pid>
 ```
 
 This builds two things:
-* dist/injection.bpf.o - an object file for the eBPF program
+* injection.bpf.o - an object file for the eBPF program
 * injection - a Go executable
 
 The Go executable reads in the object file at runtime. Take a look at the .o file with readelf if you want to see the sections defined in it.
