@@ -6,8 +6,10 @@
 #include <errno.h>
 #endif
 #include <bpf/bpf_helpers.h>
+#if defined(__TARGET_ARCH_arm64)
 #include <bpf/bpf_tracing.h>
 #include <bpf/bpf_core_read.h>
+#endif
 
 const volatile pid_t target_pid = 0;
 const volatile char filter_path[61] = "/";
@@ -53,6 +55,7 @@ int injection_bpftrace(void *ctx)
       return 0;
     }
 
+#if defined(__TARGET_ARCH_arm64)
     // Allow only file with the desired prefix.
     struct pt_regs *real_regs = (struct pt_regs *)PT_REGS_PARM1(ctx);
     int dirfd = PT_REGS_PARM1_CORE(real_regs);
@@ -73,6 +76,7 @@ int injection_bpftrace(void *ctx)
       if (cmp_path_name[i] != cmp_expected_path[i])
         return 0;
     }
+#endif
 
     // Get command name
     bpf_get_current_comm(&data.comm, sizeof(data.comm));
