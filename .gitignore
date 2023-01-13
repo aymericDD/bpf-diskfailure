@@ -1,4 +1,7 @@
 dist/
 libbpf/
 injection
+injection-x86
+injection-arm64
 *.o
+.idea/

@@ -11,8 +11,10 @@ RUN apt-get update && \
 	pahole \
         make \
         clang \
-        llvm \
-        libelf-dev
+        libelf-dev \
+        llvm
+
+RUN if [ "$ARCH" = "amd64" ] ; then apt-get install -y libc6-dev-i386 ; fi
 
 # Install Go specific version.
 RUN apt-get install -y wget && \

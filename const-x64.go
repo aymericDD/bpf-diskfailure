@@ -1,4 +1,7 @@
+//go:build amd64
 // +build amd64
 
-package main 
-const sys_execve="__x64_sys_execve"
+package main
+
+const sys_openat = "__x64_sys_openat"
+const obj_name = "injection-x86.bpf.o"
