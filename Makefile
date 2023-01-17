@@ -4,7 +4,7 @@ ifeq ($(UNAME_ARCH),aarch64)
 	ARCH=arm64
 endif
 
-TARGET := injection-$(ARCH)
+TARGET := bpf-diskfailure-$(ARCH)
 TARGET_BPF := $(TARGET).bpf.o
 
 GO_SRC := *.go

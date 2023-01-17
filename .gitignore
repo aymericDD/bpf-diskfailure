@@ -1,7 +1,7 @@
 dist/
 libbpf/
-injection
-injection-x86
-injection-arm64
+bpf-diskfailure
+bpf-diskfailure-x86
+bpf-diskfailure-arm64
 *.o
 .idea/
