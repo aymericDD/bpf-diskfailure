@@ -1,5 +1,5 @@
 # bpf-disruptor
-eBPF program that catch openat syscall to return en -ENOENT result. The goal is to fake sysdisk failures. This library is based on in Golang using [libbpfgo](https://github.com/aquasecurity/tree/main/libbpfgo). 
+eBPF program that catch openat syscall to return en -ENOENT result. The goal is to fake sysdisk failures. This library is based on in Golang using [libbpfgo](http://github.com/aquasecurity/libbpfgo). 
 
 ## Install Go 
 
@@ -9,7 +9,9 @@ See [the Go documentation](https://golang.org/doc/install)
 
 ```sh
 sudo apt-get update
-sudo apt-get install libbpf-dev make clang llvm libelf-dev
+sudo apt-get -y install libbpf-dev pahole make clang llvm libelf-dev
+# Only for amd64
+sudo apt-get -y install libc6-dev-i386
 ```
 
 ## Building and running injection
