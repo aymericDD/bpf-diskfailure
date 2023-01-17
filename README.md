@@ -16,7 +16,7 @@ sudo apt-get install libbpf-dev make clang llvm libelf-dev
 
 ```sh
 make all
-sudo ./injection -p <your-pid>
+sudo ./injection-(arm64|x86) -p <your-pid>
 ```
 
 This builds two things:
@@ -32,13 +32,26 @@ To avoid compatibility issues, you can use the `Dockerfile` provided in this rep
 Build it by your own:
 
 ```bash
-docker build -t build-injection .
+# ARM
+nerdctl build --build-arg ARCH=arm64 --platform linux/arm64 -t build-injection:lunar-arm64 .
+# AMD
+nerdctl build --build-arg ARCH=amd64 --platform linux/amd64 -t build-injection:lunar-amd64 .
 ```
 
 And the run it from the project directory to compile the program:
 
 ```bash
-docker run --rm -v $(pwd)/:/app/:z build-injection
+# ARM
+docker run --rm -v $(pwd)/:/app/:z build-injection:lunar-arm64
+# Result:
+injection-arm64 # Go binary
+injection-arm64.bpf.o # C binary
+# AMD
+docker run --rm -v $(pwd)/:/app/:z build-injection:lunar-amd64
+# Result:
+injection-x86 # Go binary
+injection-x86.bpf.o # C binary
+
 ```
 
 ## Notes 
